@@ -1,0 +1,19 @@
+﻿namespace TalentManagementData.Application.Features.Departments.Commands.UpdateDepartment
+{
+    /// <summary>
+    /// Validates update requests for departments.
+    /// </summary>
+    public class UpdateDepartmentCommandValidator : AbstractValidator<UpdateDepartmentCommand>
+    {
+        public UpdateDepartmentCommandValidator()
+        {
+            RuleFor(d => d.Id)
+                .NotEmpty().WithMessage("{PropertyName} is required.");
+
+            RuleFor(d => d.Name)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .MaximumLength(250).WithMessage("{PropertyName} must not exceed 250 characters.");
+        }
+    }
+}
+
