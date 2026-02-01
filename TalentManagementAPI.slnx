@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="TalentManagementAPI.Application/TalentManagementAPI.Application.csproj" />
+    <Project Path="TalentManagementAPI.Domain/TalentManagementAPI.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="TalentManagementAPI.Infrastructure.Persistence/TalentManagementAPI.Infrastructure.Persistence.csproj" />
+    <Project Path="TalentManagementAPI.Infrastructure.Shared/TalentManagementAPI.Infrastructure.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="TalentManagementAPI.WebApi/TalentManagementAPI.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="TalentManagementAPI.Application.Tests/TalentManagementAPI.Application.Tests.csproj" />
+    <Project Path="TalentManagementAPI.Infrastructure.Tests/TalentManagementAPI.Infrastructure.Tests.csproj" />
+    <Project Path="TalentManagementAPI.WebApi.Tests/TalentManagementAPI.WebApi.Tests.csproj" />
+  </Folder>
+</Solution>

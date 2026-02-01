@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Authors>Fuji Nguyen</Authors>
+    <Company>workcontrolgit</Company>
+    <RepositoryUrl>https://github.com/workcontrolgit</RepositoryUrl>
+    <RepositoryType>Public</RepositoryType>
+    <PackageProjectUrl>https://github.com/workcontrolgit</PackageProjectUrl>
+    <Version>1.0.0</Version>
+    <AssetTargetFallback>$(AssetTargetFallback);net8.0;netstandard2.0</AssetTargetFallback>
+    <UserSecretsId>d7dba4fb-c08e-453d-9e13-d7d0f8ba8ff0</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>TalentManagementAPI.WebApi.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.1" />
+    <PackageReference Include="EasyCaching.Core" Version="1.8.0" />
+    <PackageReference Include="EasyCaching.InMemory" Version="1.8.0" />
+    <PackageReference Include="EasyCaching.Redis" Version="1.8.0" />
+    <PackageReference Include="EasyCaching.Serialization.SystemTextJson" Version="1.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.6.3" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\TalentManagementAPI.Application\TalentManagementAPI.Application.csproj" />
+    <ProjectReference Include="..\TalentManagementAPI.Infrastructure.Persistence\TalentManagementAPI.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\TalentManagementAPI.Infrastructure.Shared\TalentManagementAPI.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
+
