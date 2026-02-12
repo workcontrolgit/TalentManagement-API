@@ -1,4 +1,4 @@
-﻿namespace TalentManagementAPI.Infrastructure.Persistence.SeedData
+namespace TalentManagementAPI.Infrastructure.Persistence.SeedData
 {
     // Static class for database initialization
     public static class DbInitializer
@@ -9,17 +9,19 @@
             // Create an instance of DatabaseSeeder
             var databaseSeeder = new DatabaseSeeder();
 
-            // Insert departments data in bulk
-            dbContext.BulkInsert(databaseSeeder.Departments);
+            // Insert departments data
+            dbContext.Departments.AddRange(databaseSeeder.Departments);
 
-            // Insert salary ranges data in bulk
-            dbContext.BulkInsert(databaseSeeder.SalaryRanges);
+            // Insert salary ranges data
+            dbContext.SalaryRanges.AddRange(databaseSeeder.SalaryRanges);
 
-            // Insert positions data in bulk
-            dbContext.BulkInsert(databaseSeeder.Positions);
+            // Insert positions data
+            dbContext.Positions.AddRange(databaseSeeder.Positions);
 
-            // Insert employees data in bulk
-            dbContext.BulkInsert(databaseSeeder.Employees);
+            // Insert employees data
+            dbContext.Employees.AddRange(databaseSeeder.Employees);
+
+            dbContext.SaveChanges();
         }
     }
 }

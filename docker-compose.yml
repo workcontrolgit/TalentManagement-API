@@ -1,0 +1,6 @@
+services:
+  talentmanagementapi.webapi:
+    image: ${DOCKER_REGISTRY-}talentmanagementapiwebapi
+    build:
+      context: ../..
+      dockerfile: ApiResources/TalentManagement-API/TalentManagementAPI.WebApi/Dockerfile

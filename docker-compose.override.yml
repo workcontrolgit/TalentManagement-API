@@ -1,0 +1,32 @@
+services:
+  talentmanagementapi.webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:8443;http://+:8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/talentmanagement-dev.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=TalentManagement!Pfx2026#
+      - UseInMemoryDatabase=true
+      - FeatureManagement__UseInMemoryDatabase=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=TalentManagementAPIDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;Encrypt=False
+    ports:
+      - "44378:8443"
+    depends_on:
+      - sqlserver
+    volumes:
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_password123
+    ports:
+      - "1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+volumes:
+  sqlserver-data:
+

@@ -79,8 +79,11 @@ try
         using (var scope = app.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            // Ensure the database is created and seed data if new
-            if (dbContext.Database.EnsureCreated())
+            // Ensure the database is created and seed data when enabled and currently empty
+            dbContext.Database.EnsureCreated();
+            var skipDbSeed = builder.Configuration.GetValue<bool>("SkipDbSeed");
+            var needsSeed = !dbContext.Departments.Any() || !dbContext.Employees.Any();
+            if (!skipDbSeed && needsSeed)
             {
                 DbInitializer.SeedData(dbContext);
             }
@@ -136,3 +139,6 @@ finally
 /// Partial Program class exposed for functional testing.
 /// </summary>
 public partial class Program { }
+
+
+
