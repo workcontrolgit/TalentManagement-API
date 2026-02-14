@@ -17,7 +17,10 @@
     <Project Path="TalentManagementAPI.WebApi.Tests/TalentManagementAPI.WebApi.Tests.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path="docs/Docker-Setup-and-Run-WebApi.md" />
+    <File Path="AGENTS.md" />
+    <File Path="docs/docker-container-webapi-setup.md" />
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
