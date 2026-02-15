@@ -18,6 +18,9 @@
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="AGENTS.md" />
+    <File Path="docs/security-policy-client-credential.md" />
+    <File Path="docs/security-review.md" />
+    <File Path="docs/security-policy-and-token-validation.md" />
     <File Path="docs/docker-container-webapi-setup.md" />
     <File Path="LICENSE.txt" />
     <File Path="README.md" />

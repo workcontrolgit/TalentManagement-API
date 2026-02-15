@@ -46,12 +46,27 @@ try
             options.AddPolicy(AuthorizationConsts.AdminPolicy, policy => policy.RequireRole(adminRole));
             options.AddPolicy(AuthorizationConsts.ManagerPolicy, policy => policy.RequireRole(managerRole, adminRole));
             options.AddPolicy(AuthorizationConsts.EmployeePolicy, policy => policy.RequireRole(employeeRole, managerRole, adminRole));
+            options.AddPolicy(AuthorizationConsts.ApiReadPolicy, policy =>
+                policy.RequireAssertion(context =>
+                    PermissionAuthorizationEvaluator.HasPermission(context.User, "app.api.talentmanagement.read")
+                    || PermissionAuthorizationEvaluator.HasAnyRole(context.User, employeeRole, managerRole, adminRole)));
+            options.AddPolicy(AuthorizationConsts.ApiWritePolicy, policy =>
+                policy.RequireAssertion(context =>
+                    PermissionAuthorizationEvaluator.HasPermission(context.User, "app.api.talentmanagement.write")
+                    || PermissionAuthorizationEvaluator.HasAnyRole(context.User, managerRole, adminRole)));
+            options.AddPolicy(AuthorizationConsts.ApiAdminPolicy, policy =>
+                policy.RequireAssertion(context =>
+                    PermissionAuthorizationEvaluator.HasPermission(context.User, "app.api.talentmanagement.admin")
+                    || PermissionAuthorizationEvaluator.HasAnyRole(context.User, adminRole)));
         }
         else
         {
             options.AddPolicy(AuthorizationConsts.AdminPolicy, policy => policy.RequireAssertion(_ => true));
             options.AddPolicy(AuthorizationConsts.ManagerPolicy, policy => policy.RequireAssertion(_ => true));
             options.AddPolicy(AuthorizationConsts.EmployeePolicy, policy => policy.RequireAssertion(_ => true));
+            options.AddPolicy(AuthorizationConsts.ApiReadPolicy, policy => policy.RequireAssertion(_ => true));
+            options.AddPolicy(AuthorizationConsts.ApiWritePolicy, policy => policy.RequireAssertion(_ => true));
+            options.AddPolicy(AuthorizationConsts.ApiAdminPolicy, policy => policy.RequireAssertion(_ => true));
         }
     });
     // Set up API security with JWT when auth is enabled

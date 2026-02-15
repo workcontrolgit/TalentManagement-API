@@ -11,6 +11,11 @@
 
         // Constant for the Employee role policy
         public const string EmployeePolicy = "EmployeePolicy";
+
+        // Capability policies for client-credential and mixed auth models
+        public const string ApiReadPolicy = "ApiReadPolicy";
+        public const string ApiWritePolicy = "ApiWritePolicy";
+        public const string ApiAdminPolicy = "ApiAdminPolicy";
     }
 }
 

@@ -154,6 +154,51 @@ namespace TalentManagementAPI.WebApi.Extensions
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromMinutes(2)
                     };
+
+                    // TEMPORARY diagnostic logging for JWT authentication troubleshooting.
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            var logger = context.HttpContext.RequestServices
+                                .GetRequiredService<ILoggerFactory>()
+                                .CreateLogger("JwtBearerDiagnostics");
+                            var tokenKid = context.Principal?.FindFirst("kid")?.Value;
+                            logger.LogError(
+                                context.Exception,
+                                "JWT authentication failed. Authority={Authority}, Audience={Audience}, TokenKid={TokenKid}",
+                                options.Authority,
+                                options.Audience,
+                                tokenKid);
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            var logger = context.HttpContext.RequestServices
+                                .GetRequiredService<ILoggerFactory>()
+                                .CreateLogger("JwtBearerDiagnostics");
+                            var issuer = context.Principal?.FindFirst("iss")?.Value
+                                ?? context.SecurityToken?.Issuer;
+                            var subject = context.Principal?.FindFirst("sub")?.Value;
+                            logger.LogInformation(
+                                "JWT token validated. Issuer={Issuer}, Subject={Subject}, Audience={Audience}",
+                                issuer,
+                                subject,
+                                options.Audience);
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            var logger = context.HttpContext.RequestServices
+                                .GetRequiredService<ILoggerFactory>()
+                                .CreateLogger("JwtBearerDiagnostics");
+                            logger.LogWarning(
+                                "JWT challenge triggered. Error={Error}, ErrorDescription={ErrorDescription}",
+                                context.Error,
+                                context.ErrorDescription);
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
 
