@@ -1,4 +1,7 @@
-﻿namespace TalentManagementAPI.Infrastructure.Shared
+﻿using TalentManagementAPI.Application.Interfaces;
+using TalentManagementAPI.Infrastructure.Shared.Services;
+
+namespace TalentManagementAPI.Infrastructure.Shared
 {
     public static class ServiceRegistration
     {
@@ -8,6 +11,7 @@
             services.AddTransient<IDateTimeService, DateTimeService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IMockService, MockService>();
+            services.AddTransient<IAiChatService, OllamaAiService>();
         }
     }
 }
