@@ -1,22 +1,22 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.FeatureManagement.Mvc;
 using TalentManagementAPI.Application.Interfaces;
 
 namespace TalentManagementAPI.WebApi.Controllers.v1
 {
-    [FeatureGate("AiEnabled")]
     [ApiVersion("1.0")]
     [AllowAnonymous]
     [Route("api/v{version:apiVersion}/ai")]
     public sealed class AiController : BaseApiController
     {
         private readonly IAiChatService _aiChatService;
+        private readonly IFeatureManagerSnapshot _featureManager;
 
-        public AiController(IAiChatService aiChatService)
+        public AiController(IAiChatService aiChatService, IFeatureManagerSnapshot featureManager)
         {
             _aiChatService = aiChatService;
+            _featureManager = featureManager;
         }
 
         /// <summary>
@@ -28,6 +28,14 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
         [HttpPost("chat")]
         public async Task<IActionResult> Chat([FromBody] AiChatRequest request, CancellationToken cancellationToken)
         {
+            if (!await _featureManager.IsEnabledAsync("AiEnabled"))
+            {
+                return Problem(
+                    detail: "AI chat is disabled. Enable FeatureManagement:AiEnabled to use this endpoint.",
+                    title: "AI chat is disabled",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+
             var reply = await _aiChatService.ChatAsync(request.Message, request.SystemPrompt, cancellationToken);
             return Ok(new AiChatResponse(reply));
         }
