@@ -19,6 +19,8 @@ try
     builder.Services.AddApplicationLayer();
     builder.Services.AddPersistenceInfrastructure(builder.Configuration);
     builder.Services.AddSharedInfrastructure(builder.Configuration);
+    // Register Ollama chat client (IChatClient) — used by OllamaAiService
+    // AiController is gated by [FeatureGate("AiEnabled")], so no calls are made when AI is disabled
     builder.Services.AddEasyCachingInfrastructure(builder.Configuration);
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<ICacheDiagnosticsPublisher, HttpCacheDiagnosticsPublisher>();

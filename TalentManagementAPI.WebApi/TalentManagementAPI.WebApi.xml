@@ -4,6 +4,14 @@
         <name>TalentManagementAPI.WebApi</name>
     </assembly>
     <members>
+        <member name="M:TalentManagementAPI.WebApi.Controllers.v1.AiController.Chat(TalentManagementAPI.WebApi.Controllers.v1.AiChatRequest,System.Threading.CancellationToken)">
+            <summary>
+            Send a message to the AI assistant and receive a reply.
+            </summary>
+            <param name="request">The chat message and optional system prompt.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>The AI-generated reply.</returns>
+        </member>
         <member name="M:TalentManagementAPI.WebApi.Controllers.v1.DepartmentsController.Get(TalentManagementAPI.Application.Features.Departments.Queries.GetDepartments.GetDepartmentsQuery)">
             <summary>
             Gets a list of departments based on the specified filter.

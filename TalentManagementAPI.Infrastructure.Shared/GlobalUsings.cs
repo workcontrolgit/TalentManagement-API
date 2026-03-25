@@ -1,6 +1,7 @@
 ﻿global using System;
 global using System.Collections.Generic;
 global using System.Linq;
+global using System.Threading;
 global using System.Threading.Tasks;
 global using AutoBogus;
 global using Bogus;
@@ -12,6 +13,8 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using MimeKit;
+global using OllamaSharp;
+global using OllamaSharp.Models.Chat;
 global using TalentManagementAPI.Application.DTOs.Email;
 global using TalentManagementAPI.Application.Exceptions;
 global using TalentManagementAPI.Application.Interfaces;
