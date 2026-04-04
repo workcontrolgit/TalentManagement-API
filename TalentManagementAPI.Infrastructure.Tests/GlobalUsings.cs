@@ -2,6 +2,7 @@
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using Moq;
+global using OllamaSharp;
 global using TalentManagementAPI.Application.Features.Departments.Queries.GetDepartments;
 global using TalentManagementAPI.Application.Features.Employees.Queries.GetEmployees;
 global using TalentManagementAPI.Application.Features.Positions.Queries.GetPositions;

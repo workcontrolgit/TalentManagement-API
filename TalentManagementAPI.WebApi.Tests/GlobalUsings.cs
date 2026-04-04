@@ -22,6 +22,7 @@ global using TalentManagementAPI.Application.Features.SalaryRanges.Commands.Crea
 global using TalentManagementAPI.Application.Features.SalaryRanges.Commands.UpdateSalaryRange;
 global using TalentManagementAPI.Application.Features.SalaryRanges.Queries.GetSalaryRangeById;
 global using TalentManagementAPI.Application.Features.SalaryRanges.Queries.GetSalaryRanges;
+global using TalentManagementAPI.Application.Interfaces;
 global using TalentManagementAPI.Application.Interfaces.Caching;
 global using TalentManagementAPI.Application.Messaging;
 global using TalentManagementAPI.Application.Parameters;
