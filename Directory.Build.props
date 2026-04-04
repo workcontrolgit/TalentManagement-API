@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(MSBuildThisFileDirectory).nuget\packages\</NuGetPackageRoot>
+    <RestorePackagesPath Condition="'$(RestorePackagesPath)' == ''">$(NuGetPackageRoot)</RestorePackagesPath>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1902</WarningsNotAsErrors>
+    <NoWarn>$(NoWarn);NU1902</NoWarn>
+  </PropertyGroup>
+</Project>

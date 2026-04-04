@@ -1,4 +1,5 @@
 using OllamaSharp.Models.Chat;
+using System.Linq;
 
 namespace TalentManagementAPI.Infrastructure.Tests.Services
 {
@@ -35,11 +36,13 @@ namespace TalentManagementAPI.Infrastructure.Tests.Services
             reply.Should().Be("Hello world");
             capturedRequest.Should().NotBeNull();
             capturedRequest!.Model.Should().Be("llama3.2");
-            capturedRequest.Messages.Should().HaveCount(2);
-            capturedRequest.Messages[0].Role.Should().Be(new ChatRole("system"));
-            capturedRequest.Messages[0].Content.Should().Be("You are concise.");
-            capturedRequest.Messages[1].Role.Should().Be(new ChatRole("user"));
-            capturedRequest.Messages[1].Content.Should().Be("Say hi");
+            capturedRequest.Messages.Should().NotBeNull();
+            var messages = capturedRequest.Messages!.ToList();
+            messages.Should().HaveCount(2);
+            messages[0].Role.Should().Be(new ChatRole("system"));
+            messages[0].Content.Should().Be("You are concise.");
+            messages[1].Role.Should().Be(new ChatRole("user"));
+            messages[1].Content.Should().Be("Say hi");
         }
 
         [Fact]
@@ -49,7 +52,7 @@ namespace TalentManagementAPI.Infrastructure.Tests.Services
             client.SetupProperty(x => x.SelectedModel, "llama3.2");
             client
                 .Setup(x => x.ChatAsync(It.IsAny<ChatRequest>(), It.IsAny<CancellationToken>()))
-                .Returns(StreamResponses());
+                .Returns((ChatRequest _, CancellationToken _) => StreamResponses());
 
             var service = new OllamaAiService(client.Object);
 
