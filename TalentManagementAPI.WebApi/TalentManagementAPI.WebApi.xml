@@ -12,6 +12,15 @@
             <param name="cancellationToken">Cancellation token.</param>
             <returns>The AI-generated reply.</returns>
         </member>
+        <member name="M:TalentManagementAPI.WebApi.Controllers.v1.AiController.HrInsight(TalentManagementAPI.WebApi.Controllers.v1.HrInsightRequest,System.Threading.CancellationToken)">
+            <summary>
+            Ask the HR AI assistant a question about your current workforce data.
+            The assistant fetches live dashboard metrics and injects them into the prompt context.
+            </summary>
+            <param name="request">The HR question to answer.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>An AI-generated answer grounded in real workforce data.</returns>
+        </member>
         <member name="M:TalentManagementAPI.WebApi.Controllers.v1.DepartmentsController.Get(TalentManagementAPI.Application.Features.Departments.Queries.GetDepartments.GetDepartmentsQuery)">
             <summary>
             Gets a list of departments based on the specified filter.
