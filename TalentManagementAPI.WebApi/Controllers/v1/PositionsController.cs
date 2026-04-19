@@ -1,4 +1,9 @@
-﻿namespace TalentManagementAPI.WebApi.Controllers.v1
+﻿using System.ComponentModel.DataAnnotations;
+using TalentManagementAPI.Application.Features.Positions.Queries.SemanticSearch;
+using TalentManagementAPI.Application.Interfaces;
+using TalentManagementAPI.Infrastructure.Persistence.Contexts;
+
+namespace TalentManagementAPI.WebApi.Controllers.v1
 {
     [ApiVersion("1.0")]
     public class PositionsController : BaseApiController
@@ -84,6 +89,75 @@
         {
             return Ok(await Mediator.Send(new DeletePositionByIdCommand { Id = id }));
         }
+
+        /// <summary>
+        /// Finds positions semantically similar to the query text using vector distance.
+        /// Requires VectorSearchEnabled feature flag and populated SearchEmbedding values.
+        /// </summary>
+        [HttpPost("semantic-search")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(List<SemanticPositionResultDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> SemanticSearch(
+            [FromBody] SemanticPositionSearchRequest request,
+            [FromServices] IFeatureManagerSnapshot featureManager,
+            CancellationToken cancellationToken)
+        {
+            if (!await featureManager.IsEnabledAsync("VectorSearchEnabled"))
+                return Problem(
+                    detail: "Vector search is disabled. Enable FeatureManagement:VectorSearchEnabled to use this endpoint.",
+                    title: "Vector search is disabled",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            var result = await Mediator.Send(
+                new SemanticPositionSearchQuery { QueryText = request.QueryText, TopK = request.TopK },
+                cancellationToken);
+
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : BadRequest(new { detail = result.Errors.FirstOrDefault() });
+        }
+
+        /// <summary>
+        /// Generates and stores SearchEmbedding for all positions that do not have one yet.
+        /// Run once after seeding data to enable semantic search.
+        /// </summary>
+        [HttpPost("generate-embeddings")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> GenerateEmbeddings(
+            [FromServices] IFeatureManagerSnapshot featureManager,
+            [FromServices] IEmbeddingService embeddingService,
+            [FromServices] ApplicationDbContext dbContext,
+            CancellationToken cancellationToken)
+        {
+            if (!await featureManager.IsEnabledAsync("VectorSearchEnabled"))
+                return Problem(
+                    detail: "Vector search is disabled.",
+                    title: "Vector search is disabled",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            var positions = dbContext.Positions
+                .Where(p => p.SearchEmbedding == null)
+                .ToList();
+
+            foreach (var position in positions)
+            {
+                var text = $"{position.PositionTitle?.Value} {position.PositionDescription}".Trim();
+                position.SearchEmbedding = await embeddingService.EmbedAsync(text, cancellationToken);
+            }
+
+            dbContext.Positions.UpdateRange(positions);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Ok(new { generated = positions.Count });
+        }
     }
+
+    public record SemanticPositionSearchRequest(
+        [Required][MinLength(3)] string QueryText,
+        int TopK = 10);
 }
 

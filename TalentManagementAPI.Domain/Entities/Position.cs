@@ -28,6 +28,13 @@ namespace TalentManagementAPI.Domain.Entities
         // Navigation property for the associated SalaryRange entity.
         public virtual SalaryRange SalaryRange { get; set; }
 
+        /// <summary>
+        /// 768-dimensional embedding of PositionTitle + PositionDescription.
+        /// Used for semantic similarity search via VECTOR_DISTANCE.
+        /// Null until embeddings are generated.
+        /// </summary>
+        public float[]? SearchEmbedding { get; set; }
+
         // Default constructor that initializes the Employees collection.
         public Position()
         {

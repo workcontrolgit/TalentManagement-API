@@ -30,6 +30,11 @@ namespace TalentManagementAPI.Infrastructure.Shared
                 sp.GetRequiredService<ICacheProvider>(),
                 sp.GetRequiredService<IAiResponseMetadata>(),
                 ttl));
+
+            var embeddingModel = config["Ollama:EmbeddingModel"] ?? "nomic-embed-text";
+            services.AddTransient<IEmbeddingService>(sp => new OllamaEmbeddingService(
+                sp.GetRequiredService<IOllamaApiClient>(),
+                embeddingModel));
         }
     }
 
