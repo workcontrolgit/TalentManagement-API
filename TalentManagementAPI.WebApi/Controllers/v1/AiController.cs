@@ -15,12 +15,20 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
     {
         private readonly IAiChatService _aiChatService;
         private readonly IFeatureManagerSnapshot _featureManager;
+        private readonly IAiResponseMetadata _aiMetadata;
 
-        public AiController(IAiChatService aiChatService, IFeatureManagerSnapshot featureManager)
+        public AiController(
+            IAiChatService aiChatService,
+            IFeatureManagerSnapshot featureManager,
+            IAiResponseMetadata aiMetadata)
         {
             _aiChatService = aiChatService;
             _featureManager = featureManager;
+            _aiMetadata = aiMetadata;
         }
+
+        private void SetAiCacheHeader()
+            => Response.Headers["X-AI-Cache"] = _aiMetadata.WasCacheHit ? "HIT" : "MISS";
 
         /// <summary>
         /// Send a message to the AI assistant and receive a reply.
@@ -40,6 +48,7 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
             }
 
             var reply = await _aiChatService.ChatAsync(request.Message, request.SystemPrompt, cancellationToken);
+            SetAiCacheHeader();
             return Ok(new AiChatResponse(reply));
         }
 
@@ -62,6 +71,7 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
             }
 
             var result = await Mediator.Send(new GetHrInsightQuery { Question = request.Question }, cancellationToken);
+            SetAiCacheHeader();
             return Ok(result);
         }
 
@@ -88,6 +98,7 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
             }
 
             var result = await Mediator.Send(new NlSearchQuery { Query = request.Query }, cancellationToken);
+            SetAiCacheHeader();
 
             return result.IsSuccess
                 ? Ok(result.Value)
