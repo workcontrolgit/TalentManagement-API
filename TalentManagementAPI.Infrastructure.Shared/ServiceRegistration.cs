@@ -1,4 +1,5 @@
 ﻿using TalentManagementAPI.Application.Interfaces;
+using TalentManagementAPI.Application.Interfaces.Caching;
 using TalentManagementAPI.Infrastructure.Shared.Services;
 
 namespace TalentManagementAPI.Infrastructure.Shared
@@ -17,7 +18,23 @@ namespace TalentManagementAPI.Infrastructure.Shared
                 var model = config["Ollama:Model"] ?? "llama3.2";
                 return new OllamaApiClient(new Uri(baseUrl), model);
             });
-            services.AddTransient<IAiChatService, OllamaAiService>();
+
+            services.AddScoped<IAiResponseMetadata, AiResponseMetadata>();
+
+            var ttlMinutes = config.GetValue<int>("Ollama:CacheTtlMinutes", 60);
+            var ttl = TimeSpan.FromMinutes(ttlMinutes);
+
+            services.AddTransient<OllamaAiService>();
+            services.AddTransient<IAiChatService>(sp => new CachingAiChatService(
+                sp.GetRequiredService<OllamaAiService>(),
+                sp.GetRequiredService<ICacheProvider>(),
+                sp.GetRequiredService<IAiResponseMetadata>(),
+                ttl));
         }
+    }
+
+    internal sealed class AiResponseMetadata : IAiResponseMetadata
+    {
+        public bool WasCacheHit { get; set; }
     }
 }
