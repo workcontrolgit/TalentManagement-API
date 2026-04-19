@@ -92,6 +92,10 @@
                 title.HasIndex(t => t.Value).IsUnique();
             });
 
+            entity.Property(e => e.SearchEmbedding)
+                .HasColumnType("vector(768)")
+                .IsRequired(false);
+
             // Configure relationship between Position and Department entities
             entity.HasOne(d => d.Department).WithMany(p => p.Positions).HasForeignKey(d => d.DepartmentId);
 

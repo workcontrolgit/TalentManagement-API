@@ -21,6 +21,15 @@
             <param name="cancellationToken">Cancellation token.</param>
             <returns>An AI-generated answer grounded in real workforce data.</returns>
         </member>
+        <member name="M:TalentManagementAPI.WebApi.Controllers.v1.AiController.NlEmployeeSearch(TalentManagementAPI.WebApi.Controllers.v1.NlEmployeeSearchRequest,System.Threading.CancellationToken)">
+            <summary>
+            Parses a natural language employee search query into structured filter parameters.
+            The returned filter fields map directly to GET /api/v1/employees query parameters.
+            </summary>
+            <param name="request">Natural language query (e.g., "find all engineers")</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>Structured employee filter parsed from the query.</returns>
+        </member>
         <member name="M:TalentManagementAPI.WebApi.Controllers.v1.DepartmentsController.Get(TalentManagementAPI.Application.Features.Departments.Queries.GetDepartments.GetDepartmentsQuery)">
             <summary>
             Gets a list of departments based on the specified filter.
@@ -127,6 +136,18 @@
             </summary>
             <param name="id">The Id of the position to delete.</param>
             <returns>The result of the deletion.</returns>
+        </member>
+        <member name="M:TalentManagementAPI.WebApi.Controllers.v1.PositionsController.SemanticSearch(TalentManagementAPI.WebApi.Controllers.v1.SemanticPositionSearchRequest,Microsoft.FeatureManagement.IFeatureManagerSnapshot,System.Threading.CancellationToken)">
+            <summary>
+            Finds positions semantically similar to the query text using vector distance.
+            Requires VectorSearchEnabled feature flag and populated SearchEmbedding values.
+            </summary>
+        </member>
+        <member name="M:TalentManagementAPI.WebApi.Controllers.v1.PositionsController.GenerateEmbeddings(Microsoft.FeatureManagement.IFeatureManagerSnapshot,TalentManagementAPI.Application.Interfaces.IEmbeddingService,TalentManagementAPI.Infrastructure.Persistence.Contexts.ApplicationDbContext,System.Threading.CancellationToken)">
+            <summary>
+            Generates and stores SearchEmbedding for all positions that do not have one yet.
+            Run once after seeding data to enable semantic search.
+            </summary>
         </member>
         <member name="M:TalentManagementAPI.WebApi.Controllers.v1.SalaryRangesController.Get(TalentManagementAPI.Application.Features.SalaryRanges.Queries.GetSalaryRanges.GetSalaryRangesQuery)">
             <summary>
