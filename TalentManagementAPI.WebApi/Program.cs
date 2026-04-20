@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 // Set up a try block to handle any exceptions during startup
 try
 {
@@ -83,6 +85,11 @@ try
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             // Ensure the database is created and seed data when enabled and currently empty
             dbContext.Database.EnsureCreated();
+            dbContext.Database.ExecuteSqlRaw(@"
+                IF COL_LENGTH('dbo.Positions', 'SearchEmbedding') IS NULL
+                BEGIN
+                    ALTER TABLE [dbo].[Positions] ADD [SearchEmbedding] vector(768) NULL;
+                END");
             var skipDbSeed = builder.Configuration.GetValue<bool>("SkipDbSeed");
             var needsSeed = !dbContext.Departments.Any() || !dbContext.Employees.Any();
             if (!skipDbSeed && needsSeed)

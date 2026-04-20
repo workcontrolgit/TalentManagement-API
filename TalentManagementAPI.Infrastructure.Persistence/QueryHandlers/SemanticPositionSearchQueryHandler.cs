@@ -54,7 +54,7 @@ namespace TalentManagementAPI.Infrastructure.Persistence.QueryHandlers
                     Position = p,
                     Distance = EF.Functions.VectorDistance(
                         "cosine",
-                        new SqlVector<float>(p.SearchEmbedding!),
+                        p.SearchEmbedding.Value,
                         sqlVector)
                 })
                 .OrderBy(x => x.Distance)

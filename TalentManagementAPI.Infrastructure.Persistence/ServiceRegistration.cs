@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using TalentManagementAPI.Application.Messaging;
 using TalentManagementAPI.Infrastructure.Persistence.Readers;
 
 namespace TalentManagementAPI.Infrastructure.Persistence
@@ -44,6 +45,12 @@ namespace TalentManagementAPI.Infrastructure.Persistence
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
                 );
+
+            services.Scan(selector => selector
+                .FromAssemblies(Assembly.GetExecutingAssembly())
+                .AddClasses(classSelector => classSelector.AssignableTo(typeof(IRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
 
             #endregion Repositories
 

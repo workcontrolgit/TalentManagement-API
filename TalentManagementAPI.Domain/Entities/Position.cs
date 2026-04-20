@@ -1,5 +1,7 @@
 ﻿using TalentManagementAPI.Domain.ValueObjects;
 
+using Microsoft.Data.SqlTypes;
+
 namespace TalentManagementAPI.Domain.Entities
 {
     public class Position : AuditableBaseEntity
@@ -33,7 +35,7 @@ namespace TalentManagementAPI.Domain.Entities
         /// Used for semantic similarity search via VECTOR_DISTANCE.
         /// Null until embeddings are generated.
         /// </summary>
-        public float[]? SearchEmbedding { get; set; }
+        public SqlVector<float>? SearchEmbedding { get; set; }
 
         // Default constructor that initializes the Employees collection.
         public Position()
