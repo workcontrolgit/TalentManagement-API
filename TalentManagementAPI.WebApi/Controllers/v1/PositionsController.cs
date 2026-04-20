@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.Data.SqlTypes;
 using TalentManagementAPI.Application.Features.Positions.Queries.SemanticSearch;
 using TalentManagementAPI.Application.Interfaces;
 using TalentManagementAPI.Infrastructure.Persistence.Contexts;
@@ -146,7 +147,8 @@ namespace TalentManagementAPI.WebApi.Controllers.v1
             foreach (var position in positions)
             {
                 var text = $"{position.PositionTitle?.Value} {position.PositionDescription}".Trim();
-                position.SearchEmbedding = await embeddingService.EmbedAsync(text, cancellationToken);
+                position.SearchEmbedding = new SqlVector<float>(
+                    await embeddingService.EmbedAsync(text, cancellationToken));
             }
 
             dbContext.Positions.UpdateRange(positions);
