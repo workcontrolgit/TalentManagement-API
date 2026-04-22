@@ -10,9 +10,10 @@
     <PackageReference Include="AutoBogus" Version="2.13.1" />
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="MailKit" Version="4.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.1" />
     <PackageReference Include="MimeKit" Version="4.14.0" />
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="10.3.0" />
     <PackageReference Include="OllamaSharp" Version="5.3.4" />
   </ItemGroup>
 

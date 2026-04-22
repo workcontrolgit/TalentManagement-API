@@ -1,45 +1,30 @@
+#nullable enable
+using Microsoft.Extensions.AI;
 using TalentManagementAPI.Application.Interfaces;
 
 namespace TalentManagementAPI.Infrastructure.Shared.Services
 {
     public class OllamaAiService : IAiChatService
     {
-        private readonly IOllamaApiClient _ollamaApiClient;
+        private readonly IChatClient _chatClient;
 
-        public OllamaAiService(IOllamaApiClient ollamaApiClient)
+        public OllamaAiService(IChatClient chatClient)
         {
-            _ollamaApiClient = ollamaApiClient;
+            _chatClient = chatClient;
         }
 
-        public async Task<string> ChatAsync(string message, string? systemPrompt = null, CancellationToken cancellationToken = default)
+        public async Task<string> ChatAsync(string message, string? systemPrompt = null,
+            CancellationToken cancellationToken = default)
         {
-            var messages = new List<Message>();
+            var messages = new List<ChatMessage>();
 
             if (!string.IsNullOrWhiteSpace(systemPrompt))
-            {
-                messages.Add(new Message(new ChatRole("system"), systemPrompt));
-            }
+                messages.Add(new ChatMessage(Microsoft.Extensions.AI.ChatRole.System, systemPrompt));
 
-            messages.Add(new Message(new ChatRole("user"), message));
+            messages.Add(new ChatMessage(Microsoft.Extensions.AI.ChatRole.User, message));
 
-            var request = new ChatRequest
-            {
-                Model = _ollamaApiClient.SelectedModel,
-                Messages = messages,
-                Stream = true
-            };
-
-            var responseBuilder = new MessageBuilder();
-
-            await foreach (var response in _ollamaApiClient.ChatAsync(request, cancellationToken).WithCancellation(cancellationToken))
-            {
-                if (response?.Message is not null)
-                {
-                    responseBuilder.Append(response);
-                }
-            }
-
-            return responseBuilder.HasValue ? responseBuilder.ToMessage().Content ?? string.Empty : string.Empty;
+            var response = await _chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
+            return response.Text ?? string.Empty;
         }
     }
 }

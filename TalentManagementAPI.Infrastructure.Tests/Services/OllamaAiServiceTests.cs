@@ -1,73 +1,59 @@
-using OllamaSharp.Models.Chat;
-using System.Linq;
+using Microsoft.Extensions.AI;
 
 namespace TalentManagementAPI.Infrastructure.Tests.Services
 {
     public class OllamaAiServiceTests
     {
         [Fact]
-        public async Task ChatAsync_WithSystemPrompt_SendsPromptAndReturnsCombinedReply()
+        public async Task ChatAsync_WithSystemPrompt_SendsCorrectMessagesAndReturnsReply()
         {
-            var client = new Mock<IOllamaApiClient>();
-            client.SetupProperty(x => x.SelectedModel, "llama3.2");
+            IList<ChatMessage>? capturedMessages = null;
 
-            ChatRequest? capturedRequest = null;
-
+            var client = new Mock<IChatClient>();
             client
-                .Setup(x => x.ChatAsync(It.IsAny<ChatRequest>(), It.IsAny<CancellationToken>()))
-                .Returns((ChatRequest request, CancellationToken _) =>
-                {
-                    capturedRequest = request;
-                    return StreamResponses(
-                        new ChatResponseStream
-                        {
-                            Message = new Message(new ChatRole("assistant"), "Hello")
-                        },
-                        new ChatResponseStream
-                        {
-                            Message = new Message(new ChatRole("assistant"), " world")
-                        });
-                });
+                .Setup(x => x.GetResponseAsync(
+                    It.IsAny<IEnumerable<ChatMessage>>(),
+                    It.IsAny<ChatOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<IEnumerable<ChatMessage>, ChatOptions?, CancellationToken>(
+                    (msgs, _, _) => capturedMessages = msgs.ToList())
+                .ReturnsAsync(new ChatResponse(new ChatMessage(Microsoft.Extensions.AI.ChatRole.Assistant, "Hello world")));
 
             var service = new OllamaAiService(client.Object);
 
             var reply = await service.ChatAsync("Say hi", "You are concise.");
 
             reply.Should().Be("Hello world");
-            capturedRequest.Should().NotBeNull();
-            capturedRequest!.Model.Should().Be("llama3.2");
-            capturedRequest.Messages.Should().NotBeNull();
-            var messages = capturedRequest.Messages!.ToList();
-            messages.Should().HaveCount(2);
-            messages[0].Role.Should().Be(new ChatRole("system"));
-            messages[0].Content.Should().Be("You are concise.");
-            messages[1].Role.Should().Be(new ChatRole("user"));
-            messages[1].Content.Should().Be("Say hi");
+            capturedMessages.Should().NotBeNull();
+            capturedMessages!.Should().HaveCount(2);
+            capturedMessages[0].Role.Should().Be(Microsoft.Extensions.AI.ChatRole.System);
+            capturedMessages[0].Text.Should().Be("You are concise.");
+            capturedMessages[1].Role.Should().Be(Microsoft.Extensions.AI.ChatRole.User);
+            capturedMessages[1].Text.Should().Be("Say hi");
         }
 
         [Fact]
-        public async Task ChatAsync_WithoutChunks_ReturnsEmptyString()
+        public async Task ChatAsync_WithoutSystemPrompt_SendsOnlyUserMessage()
         {
-            var client = new Mock<IOllamaApiClient>();
-            client.SetupProperty(x => x.SelectedModel, "llama3.2");
+            IList<ChatMessage>? capturedMessages = null;
+
+            var client = new Mock<IChatClient>();
             client
-                .Setup(x => x.ChatAsync(It.IsAny<ChatRequest>(), It.IsAny<CancellationToken>()))
-                .Returns((ChatRequest _, CancellationToken _) => StreamResponses());
+                .Setup(x => x.GetResponseAsync(
+                    It.IsAny<IEnumerable<ChatMessage>>(),
+                    It.IsAny<ChatOptions>(),
+                    It.IsAny<CancellationToken>()))
+                .Callback<IEnumerable<ChatMessage>, ChatOptions?, CancellationToken>(
+                    (msgs, _, _) => capturedMessages = msgs.ToList())
+                .ReturnsAsync(new ChatResponse(new ChatMessage(Microsoft.Extensions.AI.ChatRole.Assistant, string.Empty)));
 
             var service = new OllamaAiService(client.Object);
 
             var reply = await service.ChatAsync("Say hi");
 
             reply.Should().BeEmpty();
-        }
-
-        private static async IAsyncEnumerable<ChatResponseStream?> StreamResponses(params ChatResponseStream[] responses)
-        {
-            foreach (var response in responses)
-            {
-                yield return response;
-                await Task.Yield();
-            }
+            capturedMessages.Should().HaveCount(1);
+            capturedMessages![0].Role.Should().Be(Microsoft.Extensions.AI.ChatRole.User);
         }
     }
 }
