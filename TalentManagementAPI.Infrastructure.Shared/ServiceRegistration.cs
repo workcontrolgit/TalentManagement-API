@@ -1,4 +1,5 @@
-﻿using TalentManagementAPI.Application.Interfaces;
+﻿using Microsoft.Extensions.AI;
+using TalentManagementAPI.Application.Interfaces;
 using TalentManagementAPI.Application.Interfaces.Caching;
 using TalentManagementAPI.Infrastructure.Shared.Services;
 
@@ -12,12 +13,16 @@ namespace TalentManagementAPI.Infrastructure.Shared
             services.AddTransient<IDateTimeService, DateTimeService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IMockService, MockService>();
-            services.AddSingleton<IOllamaApiClient>(_ =>
+            // OllamaApiClient implements both IChatClient (Microsoft.Extensions.AI) and IOllamaApiClient.
+            // Register as a singleton so both interfaces resolve to the same instance.
+            services.AddSingleton<OllamaApiClient>(_ =>
             {
                 var baseUrl = config["Ollama:BaseUrl"] ?? "http://localhost:11434";
                 var model = config["Ollama:Model"] ?? "llama3.2";
                 return new OllamaApiClient(new Uri(baseUrl), model);
             });
+            services.AddSingleton<IChatClient>(sp => sp.GetRequiredService<OllamaApiClient>());
+            services.AddSingleton<IOllamaApiClient>(sp => sp.GetRequiredService<OllamaApiClient>());
 
             services.AddScoped<IAiResponseMetadata, AiResponseMetadata>();
 
