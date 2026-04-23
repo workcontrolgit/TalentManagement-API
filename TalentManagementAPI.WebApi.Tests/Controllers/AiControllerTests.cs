@@ -4,11 +4,15 @@ namespace TalentManagementAPI.WebApi.Tests.Controllers
     {
         private readonly Mock<IAiChatService> _aiChatServiceMock = new();
         private readonly Mock<IFeatureManagerSnapshot> _featureManagerMock = new();
+        private readonly Mock<IAiResponseMetadata> _aiMetadataMock = new();
         private readonly AiController _controller;
 
         public AiControllerTests()
         {
-            _controller = new AiController(_aiChatServiceMock.Object, _featureManagerMock.Object);
+            _controller = new AiController(
+                _aiChatServiceMock.Object,
+                _featureManagerMock.Object,
+                _aiMetadataMock.Object);
         }
 
         [Fact]
